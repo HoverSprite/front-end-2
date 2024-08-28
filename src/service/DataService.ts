@@ -1,4 +1,4 @@
-import { Person } from "../types/Person";
+import { Person } from "@/types/Person";
 
 export const getPersonList = async (): Promise<Person[]> => {
   const response = await fetch("http://localhost:8080/persons");

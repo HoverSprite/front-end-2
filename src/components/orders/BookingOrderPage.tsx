@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+"use client";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 // Define the TimeSlot interface
 interface TimeSlot {
@@ -9,21 +10,22 @@ interface TimeSlot {
   isBooked: boolean;
 }
 
-const BookingOrder: React.FC = () => {
+const BookingOrderPage: React.FC = () => {
   const [selectedSlot, setSelectedSlot] = useState<TimeSlot | null>(null);
-  const [cropType, setCropType] = useState<string>('Fruit');
+  const [cropType, setCropType] = useState<string>("Fruit");
   const [area, setArea] = useState<number>(0);
-  const [date, setDate] = useState<string>('');
+  const [date, setDate] = useState<string>("");
   const [timeSlots, setTimeSlots] = useState<TimeSlot[]>([]);
   const [isSlotAvailable, setIsSlotAvailable] = useState(true);
   // Fetch available time slots from the backend
   useEffect(() => {
-    axios.get('http://localhost:8081/api/timeslots')
-      .then(response => {
+    axios
+      .get("http://localhost:8081/api/timeslots")
+      .then((response) => {
         setTimeSlots(response.data);
       })
-      .catch(error => {
-        console.error('There was an error fetching the time slots!', error);
+      .catch((error) => {
+        console.error("There was an error fetching the time slots!", error);
       });
   }, []);
 
@@ -52,25 +54,25 @@ const BookingOrder: React.FC = () => {
       console.error("Please select a time slot.");
       return;
     }
-  
-  
+
     const data = {
       spraySession: {
         timeSlot: {
-          id: selectedSlot
-        }
+          id: selectedSlot,
+        },
       },
       cropType: cropType,
       area: area,
       serviceDate: date,
-      location: "702 Đ. Nguyễn Văn Linh, Tân Hưng, Quận 7, Hồ Chí Minh 700000"
+      location: "702 Đ. Nguyễn Văn Linh, Tân Hưng, Quận 7, Hồ Chí Minh 700000",
     };
-  
-    axios.post('http://localhost:8081/api/orders', data)
-      .then(response => {
+
+    axios
+      .post("http://localhost:8081/api/orders", data)
+      .then((response) => {
         alert("Order submitted successfully!");
       })
-      .catch(error => {
+      .catch((error) => {
         console.error("There was an error submitting the order!", error);
       });
   };
@@ -80,23 +82,32 @@ const BookingOrder: React.FC = () => {
       console.error("Either selectedSlot or date is missing.");
       return;
     }
-  
-    console.log("Checking availability for slot:", selectedSlot, "and date:", date);
-  
-    axios.get('http://localhost:8081/api/spraysessions/check-availability', {
-      params: {
-        timeSlotId: selectedSlot.id,  // Ensure you're sending the correct ID
-        date: date
-      }
-    })
-    .then(response => {
-      console.log("Availability check response:", response.data);
-      setIsSlotAvailable(response.data); // Assuming the API returns true/false
-    })
-    .catch(error => {
-      console.error("There was an error checking the slot availability!", error);
-      setIsSlotAvailable(false);
-    });
+
+    console.log(
+      "Checking availability for slot:",
+      selectedSlot,
+      "and date:",
+      date
+    );
+
+    axios
+      .get("http://localhost:8081/api/spraysessions/check-availability", {
+        params: {
+          timeSlotId: selectedSlot.id, // Ensure you're sending the correct ID
+          date: date,
+        },
+      })
+      .then((response) => {
+        console.log("Availability check response:", response.data);
+        setIsSlotAvailable(response.data); // Assuming the API returns true/false
+      })
+      .catch((error) => {
+        console.error(
+          "There was an error checking the slot availability!",
+          error
+        );
+        setIsSlotAvailable(false);
+      });
   };
 
   useEffect(() => {
@@ -104,13 +115,11 @@ const BookingOrder: React.FC = () => {
       checkAvailability();
     }
   }, [selectedSlot, date]);
-  
-
 
   return (
     <div className="max-w-lg mx-auto p-8 bg-white shadow-md rounded-lg">
       <h1 className="text-2xl font-bold mb-6">Booking Spray Order</h1>
-      
+
       <div className="mb-4">
         <label className="block text-gray-700">Date</label>
         <input
@@ -129,7 +138,9 @@ const BookingOrder: React.FC = () => {
               key={index}
               onClick={() => handleSlotSelection(slot)}
               className={`p-2 border rounded-md ${
-                selectedSlot?.id === slot.id ? 'bg-teal-600 text-white' : 'bg-gray-200'
+                selectedSlot?.id === slot.id
+                  ? "bg-teal-600 text-white"
+                  : "bg-gray-200"
               }`}
               disabled={slot.isBooked}
             >
@@ -175,19 +186,20 @@ const BookingOrder: React.FC = () => {
       <div className="mb-6">
         <label className="block text-gray-700">Total Cost</label>
         <p className="mt-2 text-xl font-bold text-teal-600">
-          {calculateCost().toLocaleString('en-US')} VND
+          {calculateCost().toLocaleString("en-US")} VND
         </p>
         <p className="text-sm text-gray-500">(30,000 VND/decare)</p>
       </div>
 
-      <button 
-        onClick={handleSubmit} 
+      <button
+        onClick={handleSubmit}
         className="w-full p-2 bg-teal-600 text-white rounded-md"
-        disabled={!isSlotAvailable || !selectedSlot}      >
+        disabled={!isSlotAvailable || !selectedSlot}
+      >
         Confirm and Submit
       </button>
     </div>
   );
 };
 
-export default BookingOrder;
+export default BookingOrderPage;

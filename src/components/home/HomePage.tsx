@@ -1,6 +1,6 @@
 "use client";
-import { getPersonList } from "@/app/service/DataService";
-import { Person } from "@/app/types/Person";
+import { getPersonList } from "@/service/DataService";
+import { Person } from "@/types/Person";
 import { useEffect, useState } from "react";
 
 export default function HomePage() {
